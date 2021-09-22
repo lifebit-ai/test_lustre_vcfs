@@ -1,20 +1,20 @@
 
-def sorted_files
+ch_files = Channel.create()
+
 Channel.fromPath("${params.vcf_dir}/*.vcf.gz")
     .toSortedList()
-    .subscribe { sorted_files = it }
+    .subscribe { list ->
+        list.each { ch_files << it }
+    }
 
-Channel.fromList(sorted_files)
-    .take( 3 )
-    .set { ch_files }
-
+ch_files2 = ch_files.take(3)
 
 process bcftools_sort {
     label 'bcftools'
     publishDir "${params.outdir}", mode: 'copy'
 
     input:
-    file(ingvcf) from ch_files
+    file(ingvcf) from ch_files2
 
     output:
     file("${ingvcf.simpleName}.bcf") into ch_bcf_files
