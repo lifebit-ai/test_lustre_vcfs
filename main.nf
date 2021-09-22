@@ -1,11 +1,19 @@
+Channel.fromPath("${params.vcf_dir}/*.vcf.gz")
+    .map{ [[it]] }
+    .toSortedList()
+    .transpose()
+    .view{"hi $it"}
+
+
 
 ch_files = Channel.create()
 
 Channel.fromPath("${params.vcf_dir}/*.vcf.gz")
     .toSortedList()
-    .subscribe { list ->
-        list.each { ch_files << it }
-    }
+    .subscribe onNext: { items ->
+        items.each { ch_files << it }
+    },
+    onComplete: { ch_files.close() }
 
 ch_files2 = ch_files.take(3)
 
