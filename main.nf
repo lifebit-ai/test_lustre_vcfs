@@ -6,17 +6,17 @@ Channel.fromPath("${params.vcf_dir}/**.vcf.gz")
 
 process bcftools_sort {
     label 'bcftools'
-    publishDir "output", mode: 'copy'
+    publishDir "${params.outdir}", mode: 'copy'
 
     input:
     set file(ingvcf) from ch_files
 
     output:
-    file('out.bcf') into ch_bcf_files
+    file("${ingvcf.simpleName}.bcf") into ch_bcf_files
 
     script:
     """
-    bcftools sort --temp-dir . --output-type u --max-mem 1.0G --output out.bcf ${ingvcf}
+    bcftools sort --temp-dir . --output-type u --max-mem ${params.sort_mem} --output ${ingvcf.simpleName}.bcf ${ingvcf}
     """
 
 }
