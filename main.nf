@@ -1,11 +1,3 @@
-Channel.fromPath("${params.vcf_dir}/*.vcf.gz")
-    .map{ [[it]] }
-    .toSortedList()
-    .transpose()
-    .view{"hi $it"}
-
-
-
 ch_files = Channel.create()
 
 Channel.fromPath("${params.vcf_dir}/*.vcf.gz")
