@@ -7,7 +7,7 @@ Channel.fromPath("${params.vcf_dir}/*.vcf.gz")
     },
     onComplete: { ch_files.close() }
 
-ch_files2 = ch_files.take(3)
+ch_files2 = ch_files.take(params.file_count)
 
 process bcftools_sort {
     label 'bcftools'
@@ -21,7 +21,9 @@ process bcftools_sort {
 
     script:
     """
-    bcftools sort --temp-dir . --output-type u --max-mem ${params.sort_mem} --output ${ingvcf.simpleName}.bcf ${ingvcf}
+    ${params.before_cmd}
+    bcftools sort --temp-dir ${ingvcf.simpleName} --output-type u --max-mem ${params.sort_mem} --output ${ingvcf.simpleName}.bcf ${ingvcf}
+    ${params.after_cmd}
     """
 
 }
